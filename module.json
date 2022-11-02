@@ -1,0 +1,27 @@
+{
+	"id": "multistatus",
+	"type": "module",
+	"title": "Multi Token Status",
+	"description": "Toggles token statuses for all selected tokens.",
+	"version": "This is auto replaced",
+	"library": false,
+	"manifestPlusVersion": "1.2.0",
+	"compatibility": {
+		"minimum": "10",
+		"verified": "10"
+	},
+	"authors": [
+		{
+			"name": "Alan Davies",
+			"discord": "cs96and#3764",
+			"ko-fi": "cs96and"
+		}
+	],
+	"esmodules": [
+		"scripts/multistatus.js"
+	],
+	"scripts": [],
+	"url": "This is auto replaced",
+	"manifest": "This is auto replaced",
+	"download": "This is auto replaced"
+}
