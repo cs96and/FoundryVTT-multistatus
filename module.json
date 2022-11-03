@@ -5,7 +5,6 @@
 	"description": "Toggles token statuses for all selected tokens.",
 	"version": "This is auto replaced",
 	"library": false,
-	"manifestPlusVersion": "1.2.0",
 	"compatibility": {
 		"minimum": "10",
 		"verified": "10"
