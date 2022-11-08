@@ -27,8 +27,8 @@ class MultiStatus {
 		return MultiStatus.#isV10;
 	}
 
-	static getTokenEffects(token) {
-		return (MultiStatus.isV10 ? token.document.effects : token.data.effects);
+	static getTokenData(token) {
+		return (MultiStatus.isV10 ? token.document : token.data);
 	}
 
 	static onToggleEffect(event, {overlay=false}={}) {
@@ -44,7 +44,10 @@ class MultiStatus {
 			hasStatus = (token) => token.actor.effects.some(e => e.getFlag("core", "statusId") === effect.id);
 		} else {
 			effect = img.getAttribute("src");
-			hasStatus = (token) => MultiStatus.getTokenEffects(token).some(e => e === effect);
+			hasStatus = (token) => {
+				const tokenData = MultiStatus.getTokenData(token);
+				return (overlay ? (tokenData.overlayEffect === effect) : tokenData.effects.some(e => e === effect));
+			}
 		}
 
 		const options = {
