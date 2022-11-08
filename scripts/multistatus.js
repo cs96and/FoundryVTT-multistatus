@@ -10,75 +10,49 @@
  * https://mit-license.org/
  */
 
-Hooks.once("setup", () => {
-	Hooks.on("preCreateActiveEffect", MultiSelect.onPreCreateActiveEffect);
-	Hooks.on("preDeleteActiveEffect", MultiSelect.onPreDeleteActiveEffect);
-});
-
-class MultiSelect {
-	/**
-	 * Handle the preCreateActiveEffect hook.
-	 */
-	static onPreCreateActiveEffect(document, data, options, userId) {
-		// Prevent infinite recursion
-		if (data.flags?.multistatus?.create) return;
-
-		// Check this is a HUD status effect
-		const statusId = data.flags?.core?.statusId;
-		if (!statusId || !CONFIG.statusEffects.some(e => e.id === statusId)) return;
-
-		const originalActor = document.parent;
-
-		const newData = {
-			id: data.flags.core.statusId,
-			label: data.label,
-			icon: data.icon,
-			flags: {
-				multistatus: { create: true } // flag to prevent infinite recursion
-			}
-		}
-
-		const newOptions = { active: true }
-
-		if ("overlay" in data.flags?.core)
-			newOptions.overlay = data.flags.core.overlay;
-
-		for (const tkn of canvas.tokens.controlled) {
-			// Don't re-add the status to the actor that it was just added to
-			if (tkn.actor !== originalActor) {
-				// Check that the actor doesn't already have the status
-				if (!tkn.actor.effects.some(effect => effect.flags?.core?.statusId === newData.id))
-					tkn.document.toggleActiveEffect(newData, newOptions);
-			}
-		}
+Hooks.once("ready", () => {
+	if (!game.modules.get('lib-wrapper')?.active) {
+		ui.notifications.error("Multi Token Status requires the 'libWrapper' module. Please install and activate it", { permanant: true, console: true });
+		return;
 	}
 
-	/**
-	 * Handle the preDeleteActiveEffect hook.
-	 */
-	static onPreDeleteActiveEffect(document, options, userId) {
-		// Prevent infinite recursion
-		if (document.flags?.multistatus?.del) return;
+	libWrapper.register('multistatus', 'TokenHUD.prototype._onToggleEffect', MultiStatus.onToggleEffect, 'OVERRIDE');
+});
 
-		// Check this is a HUD status effect
-		const statusId = document.flags?.core?.statusId;
-		if (!statusId || !CONFIG.statusEffects.some(e => e.id === statusId)) return;
+class MultiStatus {
+	static onToggleEffect(event, {overlay=false}={}) {
+		event.preventDefault();
+		event.stopPropagation();
+		let img = event.currentTarget;
+		let effect = null;
+		let hasStatus = null;
 
-		const originalActor = document.parent;
-		const newData = { id: document.flags.core.statusId }
-		const newOptions = { active: false }
+		if (img.dataset.statusId && this.object.actor) {
+			effect = CONFIG.statusEffects.find(e => e.id === img.dataset.statusId);
+			hasStatus = (token) => token.actor.effects.some(e => e.getFlag("core", "statusId") === effect.id);
+		} else {
+			effect = img.getAttribute("src");
+			hasStatus = (token) => token.document.effects.some(e => e === effect);
+		}
 
-		for (const tkn of canvas.tokens.controlled) {
-			// Don't re-delete the status from the actor that it was just removed from
-			if (tkn.actor !== originalActor) {
-				const effect = tkn.actor.effects.find(effect => effect.flags?.core?.statusId === newData.id)
-				if (effect) {
-					// Don't use setFlag.  We don't need to update the database, just the local instance
-					effect.flags.multistatus ??= {};
-					effect.flags.multistatus.del = true;
-					tkn.document.toggleActiveEffect(newData, newOptions);
-				}
+		const options = {
+			overlay,
+			active: !hasStatus(this.object)
+		};
+
+		const updatedActors = new Set();
+		const promises = [];
+
+		for (const token of canvas.tokens.controlled) {
+			// If the same actor has multiple tokens, only update one of them if it's a core status effect.
+			// Also, only enable/disable the effect if it's not already enabled/disabled.
+			const actor = token.actor;
+			if ((!effect.id || !updatedActors.has(actor)) && (options.active !== hasStatus(token))) {
+				promises.push(token.toggleEffect(effect, options));
+				updatedActors.add(actor);
 			}
 		}
+
+		return Promise.all(promises);
 	}
 }

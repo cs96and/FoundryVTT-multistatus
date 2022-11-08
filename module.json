@@ -20,6 +20,11 @@
 		"scripts/multistatus.js"
 	],
 	"scripts": [],
+	"relationships": {
+		"requires": [
+			{ "id": "lib-wrapper", "type": "module" }
+		]
+	},
 	"url": "This is auto replaced",
 	"manifest": "This is auto replaced",
 	"download": "This is auto replaced"
