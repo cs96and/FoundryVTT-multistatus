@@ -13,6 +13,8 @@ When adding a status to a token, that status will be added to all currently sele
 
 Similarly, when removing a status from a token, that status will be removed from all currently selected tokens.
 
+![](images/multistatus.gif)
+
 ## Installation
 Multi Token Status can be installed using the Foundry module installer.  Alternatively, you can install it using the following manifest URL...<br>
 https://github.com/cs96and/FoundryVTT-multistatus/releases/latest/download/module.json
