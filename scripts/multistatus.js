@@ -20,10 +20,22 @@ Hooks.once("ready", () => {
 });
 
 class MultiStatus {
+	static #isV10 = null;
+
+	static get isV10() {
+		MultiStatus.#isV10 ??= !isNewerVersion("10", game.version ?? game.data.version);
+		return MultiStatus.#isV10;
+	}
+
+	static getTokenEffects(token) {
+		return (MultiStatus.isV10 ? token.document.effects : token.data.effects);
+	}
+
 	static onToggleEffect(event, {overlay=false}={}) {
 		event.preventDefault();
 		event.stopPropagation();
-		let img = event.currentTarget;
+
+		const img = event.currentTarget;
 		let effect = null;
 		let hasStatus = null;
 
@@ -32,7 +44,7 @@ class MultiStatus {
 			hasStatus = (token) => token.actor.effects.some(e => e.getFlag("core", "statusId") === effect.id);
 		} else {
 			effect = img.getAttribute("src");
-			hasStatus = (token) => token.document.effects.some(e => e === effect);
+			hasStatus = (token) => MultiStatus.getTokenEffects(token).some(e => e === effect);
 		}
 
 		const options = {

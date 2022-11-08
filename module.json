@@ -1,14 +1,17 @@
 {
 	"id": "multistatus",
+	"name": "multistatus",
 	"type": "module",
 	"title": "Multi Token Status",
 	"description": "Toggles token statuses for all selected tokens.",
 	"version": "This is auto replaced",
 	"library": false,
 	"compatibility": {
-		"minimum": "10",
+		"minimum": "0.8.6",
 		"verified": "10"
 	},
+	"minimumCoreVersion": "0.8.6",
+	"compatibleCoreVersion": "10",
 	"authors": [
 		{
 			"name": "Alan Davies",
@@ -16,6 +19,7 @@
 			"ko-fi": "cs96and"
 		}
 	],
+	"author": "Alan Davies",
 	"esmodules": [
 		"scripts/multistatus.js"
 	],
@@ -25,6 +29,13 @@
 			{ "id": "lib-wrapper", "type": "module" }
 		]
 	},
+	"dependencies": [
+		{
+			"id": "lib-wrapper",
+			"name": "lib-wrapper",
+			"type": "module"
+		}
+	],
 	"url": "This is auto replaced",
 	"manifest": "This is auto replaced",
 	"download": "This is auto replaced"
