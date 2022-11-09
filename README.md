@@ -15,6 +15,19 @@ Similarly, when removing a status from a token, that status will be removed from
 
 ![](images/multistatus.gif)
 
+## System Compatibility
+Multi Token Status has been tested and verified working with the following systems...
+* Age of Sigmar: Soulbound (age-of-sigmar-soulbound)
+* Dungeons & Dragons v3.5 (D35E) *
+* Dungeons & Dragons 5th Edition (dnd5e)
+* Pathfinder 1st Edition (pf1) *
+* Simple Worldbuilding (worldbuilding)
+* Savage Worlds Adventure Edition (swade)
+
+*\* Note that "Buffs" in D&D 3.5 and PF1e will only trigger for a single token*
+
+Unfortunately Pathfinder 2nd Edition is not currently supported as it handles token statuses very differently from core foundry.  Other systems may work if they do not greatly alter the way token statuses work.  Any extra extra buttons that get added the end of the status list (e.g. "Buffs" in D&D 3.5 / PF1e) may still only trigger for a single token at a time.
+
 ## Installation
 Multi Token Status can be installed using the Foundry module installer.  Alternatively, you can install it using the following manifest URL...<br>
 https://github.com/cs96and/FoundryVTT-multistatus/releases/latest/download/module.json
