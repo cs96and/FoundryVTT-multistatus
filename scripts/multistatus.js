@@ -16,7 +16,7 @@ Hooks.once("ready", () => {
 		return;
 	}
 
-	libWrapper.register('multistatus', 'TokenHUD.prototype._onToggleEffect', MultiStatus.onToggleEffect, 'OVERRIDE');
+	libWrapper.register('multistatus', 'TokenHUD.prototype._onToggleEffect', MultiStatus.onToggleEffect, 'MIXED');
 });
 
 class MultiStatus {
@@ -31,7 +31,7 @@ class MultiStatus {
 		return (MultiStatus.isV10 ? token.document : token.data);
 	}
 
-	static onToggleEffect(event, {overlay=false}={}) {
+	static onToggleEffect(wrapper, event, options={}) {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -41,19 +41,20 @@ class MultiStatus {
 
 		if (img.dataset.statusId && this.object.actor) {
 			effect = CONFIG.statusEffects.find(e => e.id === img.dataset.statusId);
+			if (!effect) {
+				// Handle dnd35/pf1e buffs, or other fallback processing
+				return wrapper(event, options);
+			}
 			hasStatus = (token) => token.actor.effects.some(e => e.getFlag("core", "statusId") === effect.id);
 		} else {
 			effect = img.getAttribute("src");
 			hasStatus = (token) => {
 				const tokenData = MultiStatus.getTokenData(token);
-				return (overlay ? (tokenData.overlayEffect === effect) : tokenData.effects.some(e => e === effect));
+				return (options.overlay ? (tokenData.overlayEffect === effect) : tokenData.effects.some(e => e === effect));
 			}
 		}
 
-		const options = {
-			overlay,
-			active: !hasStatus(this.object)
-		};
+		options.active = !hasStatus(this.object);
 
 		const updatedActors = new Set();
 		const promises = [];
