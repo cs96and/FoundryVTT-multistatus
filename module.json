@@ -4,7 +4,7 @@
 	"type": "module",
 	"title": "Multi Token Status",
 	"description": "Toggles token statuses for all selected tokens.",
-	"version": "This is auto replaced",
+	"version": "#{VERSION}#",
 	"library": false,
 	"compatibility": {
 		"minimum": "0.8.6",
@@ -36,7 +36,7 @@
 			"type": "module"
 		}
 	],
-	"url": "This is auto replaced",
-	"manifest": "This is auto replaced",
-	"download": "This is auto replaced"
+	"url": "#{URL}#",
+	"manifest": "#{MANIFEST}#",
+	"download": "#{DOWNLOAD}#"
 }
