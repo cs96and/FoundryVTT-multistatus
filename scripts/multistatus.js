@@ -21,10 +21,16 @@ Hooks.once("ready", () => {
 
 class MultiStatus {
 	static #isV10 = null;
+	static #isV11 = null;
 
 	static get isV10() {
 		MultiStatus.#isV10 ??= !isNewerVersion("10", game.version ?? game.data.version);
 		return MultiStatus.#isV10;
+	}
+
+	static get isV11() {
+		MultiStatus.#isV11 ??= !isNewerVersion("11", game.version ?? game.data.version);
+		return MultiStatus.#isV11;
 	}
 
 	static getTokenData(token) {
@@ -45,7 +51,11 @@ class MultiStatus {
 				// Handle dnd35/pf1e buffs, or other fallback processing
 				return wrapper(event, options);
 			}
-			hasStatus = (token) => token.actor.effects.some(e => e.getFlag("core", "statusId") === effect.id);
+
+			if (MultiStatus.isV11)
+				hasStatus = (token) => token.actor.effects.some(e => e.statuses.has(effect.id));
+			else
+				hasStatus = (token) => token.actor.effects.some(e => e.getFlag("core", "statusId") === effect.id);
 		} else {
 			effect = img.getAttribute("src");
 			hasStatus = (token) => {
