@@ -21,27 +21,17 @@ Hooks.once("ready", () => {
 });
 
 class MultiStatus {
-	static #isV10 = null;
 	static #isV11 = null;
 	static #hasDfreds = null;
 
-	static get isV10() {
-		MultiStatus.#isV10 ??= !isNewerVersion("10", game.version ?? game.data.version);
-		return MultiStatus.#isV10;
-	}
-
 	static get isV11() {
-		MultiStatus.#isV11 ??= !isNewerVersion("11", game.version ?? game.data.version);
+		MultiStatus.#isV11 ??= !foundry.utils.isNewerVersion("11", game.version);
 		return MultiStatus.#isV11;
 	}
 
 	static get hasDfreds() {
 		MultiStatus.#hasDfreds ??= !!game.modules.get('dfreds-convenient-effects')?.active;
 		return MultiStatus.#hasDfreds;
-	}
-
-	static getTokenData(token) {
-		return (MultiStatus.isV10 ? token.document : token.data);
 	}
 
 	static onToggleEffect(wrapper, event, options={}) {
@@ -66,8 +56,7 @@ class MultiStatus {
 		} else {
 			effect = img.getAttribute("src");
 			hasStatus = (token) => {
-				const tokenData = MultiStatus.getTokenData(token);
-				return (options.overlay ? (tokenData.overlayEffect === effect) : tokenData.effects.some(e => e === effect));
+				return (options.overlay ? (token.document.overlayEffect === effect) : token.document.effects.some(e => e === effect));
 			}
 		}
 
