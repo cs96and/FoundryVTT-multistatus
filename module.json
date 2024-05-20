@@ -6,12 +6,11 @@
 	"description": "Toggles token statuses for all selected tokens.",
 	"version": "#{VERSION}#",
 	"library": false,
+	"manifestPlusVersion": "1.2.0",
 	"compatibility": {
-		"minimum": "0.8.6",
+		"minimum": "10",
 		"verified": "11"
 	},
-	"minimumCoreVersion": "0.8.6",
-	"compatibleCoreVersion": "11",
 	"authors": [
 		{
 			"name": "Alan Davies",
@@ -19,24 +18,17 @@
 			"ko-fi": "cs96and"
 		}
 	],
-	"author": "Alan Davies",
-	"esmodules": [
-		"scripts/multistatus.js"
-	],
-	"scripts": [],
 	"relationships": {
 		"requires": [
 			{ "id": "lib-wrapper", "type": "module" }
 		]
 	},
-	"dependencies": [
-		{
-			"id": "lib-wrapper",
-			"name": "lib-wrapper",
-			"type": "module"
-		}
+	"esmodules": [
+		"scripts/multistatus.js"
 	],
+	"scripts": [],
 	"url": "#{URL}#",
 	"manifest": "#{MANIFEST}#",
-	"download": "#{DOWNLOAD}#"
+	"download": "#{DOWNLOAD}#",
+	"changelog": "#{CHANGELOG}#"
 }
