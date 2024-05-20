@@ -17,6 +17,7 @@ Hooks.once("ready", () => {
 	}
 
 	libWrapper.register('multistatus', 'TokenHUD.prototype._onToggleEffect', MultiStatus.onToggleEffect, 'MIXED');
+	libWrapper.ignore_conflicts('multistatus', 'dfreds-convenient-effects', 'TokenHUD.prototype._onToggleEffect');
 });
 
 class MultiStatus {
