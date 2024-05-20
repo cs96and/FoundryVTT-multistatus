@@ -22,6 +22,7 @@ Hooks.once("ready", () => {
 class MultiStatus {
 	static #isV10 = null;
 	static #isV11 = null;
+	static #hasDfreds = null;
 
 	static get isV10() {
 		MultiStatus.#isV10 ??= !isNewerVersion("10", game.version ?? game.data.version);
@@ -31,6 +32,11 @@ class MultiStatus {
 	static get isV11() {
 		MultiStatus.#isV11 ??= !isNewerVersion("11", game.version ?? game.data.version);
 		return MultiStatus.#isV11;
+	}
+
+	static get hasDfreds() {
+		MultiStatus.#hasDfreds ??= !!game.modules.get('dfreds-convenient-effects')?.active;
+		return MultiStatus.#hasDfreds;
 	}
 
 	static getTokenData(token) {
@@ -74,7 +80,12 @@ class MultiStatus {
 			// Also, only enable/disable the effect if it's not already enabled/disabled.
 			const actor = token.actor;
 			if ((!effect.id || !updatedActors.has(actor)) && (options.active !== hasStatus(token))) {
-				promises.push(token.toggleEffect(effect, options));
+				// If this is a DFred's Convenient Effect, then handle by calling the correct DFred's function.
+				if (MultiStatus.hasDfreds && effect.id.startsWith('Convenient Effect: ')) {
+					promises.push(game.dfreds.statusEffects.onToggleEffect({token, wrapper, args: [event, options]}));
+				} else {
+					promises.push(token.toggleEffect(effect, options));
+				}
 				updatedActors.add(actor);
 			}
 		}

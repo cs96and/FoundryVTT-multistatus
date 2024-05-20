@@ -28,6 +28,12 @@ Multi Token Status has been tested and verified working with the following syste
 
 Unfortunately Pathfinder 2nd Edition is not currently supported as it handles token statuses very differently from core foundry.  Other systems may work if they do not greatly alter the way token statuses work.  Any extra extra buttons that get added the end of the status list (e.g. "Buffs" in D&D 3.5 / PF1e) may still only trigger for a single token at a time.
 
+## Module Compatibility
+This module may not behave correctly with any other module that changes status effects, such as [FoundryVTT Status Icon Counters](https://gitlab.com/woodentavern/status-icon-counters).
+
+### DFred's Convenient Effects
+This module is compatible with [DFred's Convernient Effects](https://github.com/DFreds/dfreds-convenient-effects), however you should prioritize this module over DFred's in the libWrapper settings.  To do that, open the Settings in Foundy, then navigate to the libWrapper settings, then click the "libWrapper Settings Menu" button.  In the "Unprioritized Packages" section, find and select "Multi Token Status" and then click the up arrow between the "Prioritized Packages" and "Unprioritized Packages".  This will move Multi Token Status to the Prioritized Packages section.  Click "Save", and then re-load the game when prompted.
+
 ## Installation
 Multi Token Status can be installed using the Foundry module installer.  Alternatively, you can install it using the following manifest URL...<br>
 https://github.com/cs96and/FoundryVTT-multistatus/releases/latest/download/module.json
