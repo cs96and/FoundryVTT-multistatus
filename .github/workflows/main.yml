@@ -17,13 +17,16 @@ jobs:
       with:
         files: 'module.json'
       env:
-        VERSION: ${{github.event.release.tag_name}}
-        URL: https://github.com/${{github.repository}}
-        MANIFEST: https://github.com/${{github.repository}}/releases/latest/download/module.json
-        DOWNLOAD: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zip
+        VERSION: ${{ github.event.release.tag_name }}
+        URL: https://github.com/${{ github.repository }}
+        MANIFEST: https://github.com/${{ github.repository }}/releases/latest/download/module.json
+        DOWNLOAD: https://github.com/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/module.zip
+        CHANGELOG: https://github.com/${{ github.repository }}/releases/tag/${{ github.event.release.tag_name }}
 
     # Create a zip file with all files required by the module to add to the release
-    - run: zip -r ./module.zip scripts/ LICENSE module.json
+    - name: Zip Files
+      id: zip_files
+      run: zip -r ./module.zip scripts/ LICENSE module.json
 
     # Create a release for this specific version
     - name: Update Release with Files
@@ -31,10 +34,19 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         allowUpdates: true # Set this to false if you want to prevent updating existing releases
-        name: ${{ github.event.release.name }}
-        draft: ${{ github.event.release.unpublished }}
-        prerelease: ${{ github.event.release.prerelease }}
+        omitNameDuringUpdate: true
+        omitBodyDuringUpdate: true
+        omitDraftDuringUpdate: true
+        omitPrereleaseDuringUpdate: true
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: './module.json, ./module.zip'
         tag: ${{ github.event.release.tag_name }}
-        body: ${{ github.event.release.body }}
+
+    # Publish the release to FoundryVTT's package repository.
+    - name: Publish Module to FoundryVTT Website
+      id: publish_to_foundry_website
+      if: ${{ !github.event.release.unpublished && !github.event.release.prerelease }}
+      uses: cs96and/FoundryVTT-release-package@v1
+      with:
+        package-token: ${{ secrets.FOUNDRY_PACKAGE_TOKEN }}
+        manifest-url: https://github.com/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/module.json
