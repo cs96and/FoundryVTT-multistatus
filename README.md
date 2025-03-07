@@ -21,12 +21,13 @@ Multi Token Status has been tested and verified working with the following syste
 * Dungeons & Dragons v3.5 (D35E) *
 * Dungeons & Dragons 5th Edition (dnd5e)
 * Pathfinder 1st Edition (pf1) *
+* Pathfinder 2nd Edition (pf2e)
 * Simple Worldbuilding (worldbuilding)
 * Savage Worlds Adventure Edition (swade)
 
 *\* Note that "Buffs" in D&D 3.5 and PF1e will only trigger for a single token*
 
-Unfortunately Pathfinder 2nd Edition is not currently supported as it handles token statuses very differently from core foundry.  Other systems may work if they do not greatly alter the way token statuses work.  Any extra extra buttons that get added the end of the status list (e.g. "Buffs" in D&D 3.5 / PF1e) may still only trigger for a single token at a time.
+Other systems may work if they do not greatly alter the way token statuses work.  Any extra extra buttons that get added the end of the status list (e.g. "Buffs" in D&D 3.5 / PF1e) may still only trigger for a single token at a time.
 
 ## Module Compatibility
 This module may not behave correctly with any other module that changes status effects, such as [FoundryVTT Status Icon Counters](https://gitlab.com/woodentavern/status-icon-counters).
