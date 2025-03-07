@@ -1,15 +1,12 @@
 {
 	"id": "multistatus",
-	"name": "multistatus",
-	"type": "module",
 	"title": "Multi Token Status",
 	"description": "Toggles token statuses for all selected tokens.",
 	"version": "#{VERSION}#",
 	"library": false,
-	"manifestPlusVersion": "1.2.0",
 	"compatibility": {
 		"minimum": "10",
-		"verified": "12"
+		"verified": "13"
 	},
 	"authors": [
 		{

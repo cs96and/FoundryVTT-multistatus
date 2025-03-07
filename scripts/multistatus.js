@@ -10,11 +10,34 @@
  * https://mit-license.org/
  */
 
-class MultiStatus {
+class Utils {
 	static #isV11 = null;
 	static #isV12 = null;
+	static #isV13 = null;
 	static #hasDfreds = null;
 
+	static get isV11() {
+		Utils.#isV11 ??= !foundry.utils.isNewerVersion("11", game.version);
+		return Utils.#isV11;
+	}
+
+	static get isV12() {
+		Utils.#isV12 ??= !foundry.utils.isNewerVersion("12", game.version);
+		return Utils.#isV12;
+	}
+
+	static get isV13() {
+		Utils.#isV13 ??= !foundry.utils.isNewerVersion("13", game.version);
+		return Utils.#isV13;
+	}
+
+	static get hasDfreds() {
+		Utils.#hasDfreds ??= !!game.modules.get('dfreds-convenient-effects')?.active;
+		return Utils.#hasDfreds;
+	}
+}
+
+class MultiStatus {
 	static {
 		Hooks.once("ready", () => {
 			if (!game.modules.get('lib-wrapper')?.active) {
@@ -22,7 +45,7 @@ class MultiStatus {
 				return;
 			}
 
-			if (MultiStatus.isV12) {
+			if (Utils.isV12) {
 				Hooks.on("renderTokenHUD", MultiStatus.onRenderTokenHUD);
 				libWrapper.register('multistatus', 'Actor.prototype.toggleStatusEffect', MultiStatus.Actor_toggleStatusEffect, 'WRAPPER');
 			} else {
@@ -30,21 +53,6 @@ class MultiStatus {
 				libWrapper.ignore_conflicts('multistatus', 'dfreds-convenient-effects', 'TokenHUD.prototype._onToggleEffect');
 			}		
 		});
-	}
-
-	static get isV11() {
-		MultiStatus.#isV11 ??= !foundry.utils.isNewerVersion("11", game.version);
-		return MultiStatus.#isV11;
-	}
-
-	static get isV12() {
-		MultiStatus.#isV12 ??= !foundry.utils.isNewerVersion("12", game.version);
-		return MultiStatus.#isV12;
-	}
-
-	static get hasDfreds() {
-		MultiStatus.#hasDfreds ??= !!game.modules.get('dfreds-convenient-effects')?.active;
-		return MultiStatus.#hasDfreds;
 	}
 
 	//
@@ -66,7 +74,7 @@ class MultiStatus {
 				return wrapper(event, options);
 			}
 
-			if (MultiStatus.isV11)
+			if (Utils.isV11)
 				hasStatus = (token) => token.actor.effects.some(e => e.statuses.has(effect.id));
 			else
 				hasStatus = (token) => token.actor.effects.some(e => e.getFlag("core", "statusId") === effect.id);
@@ -88,7 +96,7 @@ class MultiStatus {
 			const actor = token.actor;
 			if ((!effect.id || !updatedActors.has(actor)) && (options.active !== hasStatus(token))) {
 				// If this is a DFred's Convenient Effect, then handle by calling the correct DFred's function.
-				if (MultiStatus.hasDfreds && effect.id.startsWith('Convenient Effect: ')) {
+				if (Utils.hasDfreds && effect.id.startsWith('Convenient Effect: ')) {
 					promises.push(game.dfreds.statusEffects.onToggleEffect({token, wrapper, args: [event, options]}));
 				} else {
 					promises.push(token.toggleEffect(effect, options));
@@ -101,7 +109,7 @@ class MultiStatus {
 	}
 
 	//
-	// v12 handling
+	// v12 and v13 handling
 	//
 
 	static #isOnToggleEffect = false;
@@ -110,33 +118,45 @@ class MultiStatus {
 	// TokenHUD.#onToggleEffect is private in v12, so we have to override TokenHUD.activateListeners instead,
 	// to get it to call our own version of TokenHUD_onToggleEffect.
 	static onRenderTokenHUD(app, html, data) {
-		const effectsTray = html.find(".status-effects");
+		const element = Utils.isV13 ? html : html[0];
+		const effectsTray = element.querySelector(".status-effects");
 
-		// Replace the click handlers...
-		effectsTray.off("click", ".effect-control");
-		effectsTray.on("click", ".effect-control", MultiStatus.TokenHUD_onToggleEffect.bind(app));
-		effectsTray.off("contextmenu", ".effect-control");
-		effectsTray.on("contextmenu", ".effect-control", event => MultiStatus.TokenHUD_onToggleEffect.call(app, event, {overlay: true}));
+		effectsTray.addEventListener("click",
+			MultiStatus.TokenHUD_onToggleEffect.bind(app),
+			{ capture: true });
+
+		effectsTray.addEventListener("contextmenu",
+			event => MultiStatus.TokenHUD_onToggleEffect.call(app, event, {overlay: true}),
+			{ capture: true });
 	}
 
 	// Copy of core TokenHUD.#onToggleEffect, but we set the #isOnToggleEffect flag for the duration of the call.
-	static TokenHUD_onToggleEffect(event, {overlay=false}={}) {
-		try
-		{
-			// Set a flag so that Actor_toggleStatusEffect knows it is being called from TokenHUD_onToggleEffect.
-			MultiStatus.#isOnToggleEffect = true;
+	static async TokenHUD_onToggleEffect(event, options={}) {
+		const target = event.target;
+		const statusId = target.dataset.statusId;
 
-			event.preventDefault();
-			event.stopPropagation();
-			if ( !this.actor ) return ui.notifications.warn("HUD.WarningEffectNoActor", {localize: true});
-			const statusId = event.currentTarget.dataset.statusId;
-			this.actor.toggleStatusEffect(statusId, {overlay});
-		} finally {
-			MultiStatus.#isOnToggleEffect = false;
+		if (statusId != null) {
+			try
+			{
+				// Set a flag so that Actor_toggleStatusEffect knows it is being called from TokenHUD_onToggleEffect.
+				MultiStatus.#isOnToggleEffect = true;
+
+				event.preventDefault();
+				event.stopPropagation();
+
+				// `this` is a TokenHUD here
+				if (!this.actor)
+					return ui.notifications.warn("HUD.WarningEffectNoActor", {localize: true});
+
+				options.active = !target.classList.contains("active");
+				await this.actor.toggleStatusEffect(statusId, options);
+			} finally {
+				MultiStatus.#isOnToggleEffect = false;
+			}
 		}
 	}
 
-	static async Actor_toggleStatusEffect(wrapper, statusId, options) {
+	static async Actor_toggleStatusEffect(wrapper, statusId, options={}) {
 		try
 		{
 			// The call to token.actor.toggleStatusEffect below will recurse into this function again (because it's wrapped).
@@ -146,17 +166,15 @@ class MultiStatus {
 				return wrapper(statusId, options);
 			}
 
-			const selectedActor = this;
 			const updatedActors = new Set();
 
 			let result = undefined;
-			options.active = !selectedActor.statuses.has(statusId);
+			options.active ??= !this.statuses.has(statusId);
 
 			for (const token of canvas.tokens.controlled) {
 				// If the same actor has multiple tokens, only update one of them.
-				// Also, only enable/disable the effect if it's not already enabled/disabled.
-				if (!updatedActors.has(token.actor) && (options.active !== token.actor.statuses.has(statusId))) {
-					if (token.actor === selectedActor) {
+				if (!updatedActors.has(token.actor)) {
+					if (token.actor === this) {
 						result = wrapper(statusId, options);
 					} else {
 						token.actor.toggleStatusEffect(statusId, options);
