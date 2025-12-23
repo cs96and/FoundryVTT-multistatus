@@ -17,13 +17,14 @@ Similarly, when removing a status from a token, that status will be removed from
 
 ## System Compatibility
 Multi Token Status has been tested and verified working with the following systems...
-* Age of Sigmar: Soulbound (age-of-sigmar-soulbound)
-* Dungeons & Dragons v3.5 (D35E) *
-* Dungeons & Dragons 5th Edition (dnd5e)
-* Pathfinder 1st Edition (pf1) *
-* Pathfinder 2nd Edition (pf2e)
-* Simple Worldbuilding (worldbuilding)
-* Savage Worlds Adventure Edition (swade)
+* Age of Sigmar: Soulbound (`age-of-sigmar-soulbound`)
+* Dungeons & Dragons v3.5 (`D35E`) *
+* Dungeons & Dragons 5th Edition (`dnd5e`)
+* GURPS 4e Game Aid (`gurps`)
+* Pathfinder 1st Edition (`pf1`) *
+* Pathfinder 2nd Edition (`pf2e`)
+* Simple Worldbuilding (`worldbuilding`)
+* Savage Worlds Adventure Edition (`swade`)
 
 *\* Note that "Buffs" in D&D 3.5 and PF1e will only trigger for a single token*
 
