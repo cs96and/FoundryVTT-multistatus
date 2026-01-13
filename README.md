@@ -1,5 +1,12 @@
 # Multi Token Status for Foundry
 
+## MULTI TOKEN STATUS HAS MOVED TO [CODEBERG](https://codeberg.org/cs96and/FoundryVTT-multistatus)
+Please report any future issues there.  Foundry should prompt you to use the new location when you update your modules.
+
+This repo will be archived and eventually deleted.
+
+---
+
 ![GitHub Latest Release](https://img.shields.io/github/release/cs96and/FoundryVTT-multistatus?style=for-the-badge)
 ![Foundry Version](https://img.shields.io/badge/dynamic/json?label=Foundry%20Version&prefix=v&query=%24.compatibility.verified&url=https%3A%2F%2Fraw.githubusercontent.com%2Fcs96and%2FFoundryVTT-multistatus%2Fmaster%2Fmodule.json&style=for-the-badge)
 ![Latest Release Downloads](https://img.shields.io/github/downloads/cs96and/FoundryVTT-multistatus/latest/total?style=for-the-badge)
